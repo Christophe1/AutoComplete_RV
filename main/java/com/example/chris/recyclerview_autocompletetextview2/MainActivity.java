@@ -42,7 +42,10 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
     // url to fetch contacts json
     // private static final String URL = "https://api.androidhive.info/json/contacts.json";
 
-     private static final String URL = "http://www.populisto.com/AllCategories.php";
+    private static final String URL = "http://www.populisto.com/AllCategories.php";
+    private static final String SearchCategories_URL = "http://www.populisto.com/AllCategories4.php";
+  //private static final String SearchCategories_URL = "https://api.androidhive.info/json/contacts.json";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +71,50 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+      //  recyclerView.setItemAnimator(new DefaultItemAnimator());
       //  recyclerView.addItemDecoration(new MyDividerItemDecoration(this, DividerItemDecoration.VERTICAL, 36));
         recyclerView.setAdapter(mAdapter);
 
-        fetchContacts();
+       // fetchContacts();
+
+        JsonArrayRequest request = new JsonArrayRequest(SearchCategories_URL,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (response == null) {
+                            Toast.makeText(getApplicationContext(), "Couldn't fetch the results! Pleas try again.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        //create a new instance of the Contact class
+                        Contact contact = new Contact();
+
+                        //In Contact class, so getItemViewType will know which layout to show
+                        contact.setType_row("1");
+
+                        List<Contact> items = new Gson().fromJson(response.toString(), new TypeToken<List<Contact>>() {
+                        }.getType());
+
+                        // adding contacts to contacts list
+                        contactList.clear();
+                        contactList.addAll(items);
+
+                        // refreshing recycler view
+                        mAdapter.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(), "...4.php", Toast.LENGTH_LONG).show();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // error in getting json
+                Log.e(TAG, "Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        MyApplication.getInstance().addToRequestQueue(request);
+
     }
 
     /**
@@ -84,19 +126,27 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                     @Override
                     public void onResponse(JSONArray response) {
                         if (response == null) {
-                            Toast.makeText(getApplicationContext(), "Couldn't fetch the contacts! Pleas try again.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Couldn't fetch the results! Pleas try again.", Toast.LENGTH_LONG).show();
                             return;
                         }
+
+                        //create a new instance of the Contact class
+                        Contact contact = new Contact();
+
+                        //In Contact class, so getItemViewType will know which layout to show
+                        contact.setType_row("2");
 
                         List<Contact> items = new Gson().fromJson(response.toString(), new TypeToken<List<Contact>>() {
                         }.getType());
 
                         // adding contacts to contacts list
-                        contactList.clear();
-                        contactList.addAll(items);
+                      //  contactList.clear();
+                     //   contactList.addAll(items);
 
                         // refreshing recycler view
                         mAdapter.notifyDataSetChanged();
+                        Toast.makeText(getApplicationContext(), "...fetch.php", Toast.LENGTH_LONG).show();
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -133,6 +183,10 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
             @Override
             public boolean onQueryTextChange(String query) {
+
+                //call fetchContacts function when first letter has been
+                //entered into the searchView
+                fetchContacts();
                 // filter recycler view when text is changed
                 mAdapter.getFilter().filter(query);
                 return false;

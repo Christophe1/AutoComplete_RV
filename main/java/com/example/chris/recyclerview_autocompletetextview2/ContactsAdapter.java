@@ -25,13 +25,14 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     private ContactsAdapterListener listener;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, phone;
+        public TextView name, phone, cat_id;
         public ImageView thumbnail;
 
         public MyViewHolder(View view) {
             super(view);
             name = (TextView) view.findViewById(R.id.name);
-          //  phone = (TextView) view.findViewById(R.id.phone);
+            cat_id =  (TextView) view.findViewById(R.id.cat_id);
+            //phone = (TextView) view.findViewById(R.id.phone);
            // thumbnail = view.findViewById(R.id.thumbnail);
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -43,6 +44,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
             });
         }
     }
+
+/*    @Override
+    public int getItemViewType(int position) {
+        //for each row in recyclerview, get the getType_row
+        //it will either be the PopulistoListView or the fetched contacts
+        return Integer.parseInt(theContactsList.get(position).getType_row());
+    }*/
 
 
     public ContactsAdapter(Context context, List<Contact> contactList, ContactsAdapterListener listener) {
@@ -64,7 +72,8 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final Contact contact = contactListFiltered.get(position);
         holder.name.setText(contact.getName());
-       // holder.phone.setText(contact.getPhone());
+        holder.cat_id.setText(contact.getCat_Id());
+//        holder.phone.setText(contact.getPhone());
 
     /*    Glide.with(context)
                 .load(contact.getImage())
