@@ -36,14 +36,19 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
     private List<Contact> contactList;
+
+    private List<Review> reviewList = new ArrayList<Review>();
+
+    private PopulistoListAdapter pAdapter;
+
     private ContactsAdapter mAdapter;
     private SearchView searchView;
 
     // url to fetch contacts json
     // private static final String URL = "https://api.androidhive.info/json/contacts.json";
 
-    private static final String URL = "http://www.populisto.com/AllCategories.php";
-    private static final String SearchCategories_URL = "http://www.populisto.com/AllCategories4.php";
+    private static final String AllReviews_URL = "http://www.populisto.com/AllReviews.php";
+    private static final String SearchCategories_URL = "http://www.populisto.com/AllCategories.php";
   //private static final String SearchCategories_URL = "https://api.androidhive.info/json/contacts.json";
 
 
@@ -64,7 +69,15 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         contactList = new ArrayList<>();
+
+        //for populisto reviews of the user
+        pAdapter = new PopulistoListAdapter(reviewList, this);
+
+        //for filterable
         mAdapter = new ContactsAdapter(this, contactList, this);
+
+       // final PopulistoListAdapter adapter = new PopulistoListAdapter(reviewList, this);
+
 
         // white background notification bar
         whiteNotificationBar(recyclerView);
@@ -73,11 +86,13 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
         recyclerView.setLayoutManager(mLayoutManager);
       //  recyclerView.setItemAnimator(new DefaultItemAnimator());
       //  recyclerView.addItemDecoration(new MyDividerItemDecoration(this, DividerItemDecoration.VERTICAL, 36));
-        recyclerView.setAdapter(mAdapter);
+
+          recyclerView.setAdapter(pAdapter);
+      //  recyclerView.setAdapter(mAdapter);
 
        // fetchContacts();
 
-        JsonArrayRequest request = new JsonArrayRequest(SearchCategories_URL,
+        JsonArrayRequest request = new JsonArrayRequest(AllReviews_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -87,20 +102,20 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                         }
 
                         //create a new instance of the Contact class
-                        Contact contact = new Contact();
+                       // Contact contact = new Contact();
 
                         //In Contact class, so getItemViewType will know which layout to show
-                        contact.setType_row("1");
+                       // contact.setType_row("1");
 
-                        List<Contact> items = new Gson().fromJson(response.toString(), new TypeToken<List<Contact>>() {
+                        List<Review> items = new Gson().fromJson(response.toString(), new TypeToken<List<Review>>() {
                         }.getType());
 
                         // adding contacts to contacts list
-                        contactList.clear();
-                        contactList.addAll(items);
+                        //contactList.clear();
+                        reviewList.addAll(items);
 
                         // refreshing recycler view
-                        mAdapter.notifyDataSetChanged();
+                        pAdapter.notifyDataSetChanged();
                         Toast.makeText(getApplicationContext(), "...4.php", Toast.LENGTH_LONG).show();
 
                     }
@@ -121,7 +136,10 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
      * fetches json by making http calls
      */
     private void fetchContacts() {
-        JsonArrayRequest request = new JsonArrayRequest(URL,
+
+          recyclerView.setAdapter(mAdapter);
+
+        JsonArrayRequest request = new JsonArrayRequest(SearchCategories_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -131,17 +149,18 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                         }
 
                         //create a new instance of the Contact class
-                        Contact contact = new Contact();
+                        //Contact contact = new Contact();
 
                         //In Contact class, so getItemViewType will know which layout to show
-                        contact.setType_row("2");
+                        //contact.setType_row("2");
 
                         List<Contact> items = new Gson().fromJson(response.toString(), new TypeToken<List<Contact>>() {
                         }.getType());
 
                         // adding contacts to contacts list
-                      //  contactList.clear();
-                     //   contactList.addAll(items);
+                        reviewList.clear();
+                        contactList.clear();
+                        contactList.addAll(items);
 
                         // refreshing recycler view
                         mAdapter.notifyDataSetChanged();
