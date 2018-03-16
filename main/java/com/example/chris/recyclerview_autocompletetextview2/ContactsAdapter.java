@@ -9,6 +9,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +22,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
         implements Filterable {
     private Context context;
     private List<Contact> contactList;
+    private List<Contact> listWithoutDuplicates;
     private List<Contact> contactListFiltered;
     private ContactsAdapterListener listener;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, phone, cat_id;
-        public ImageView thumbnail;
+      //  public ImageView thumbnail;
 
         public MyViewHolder(View view) {
             super(view);
@@ -56,8 +58,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     public ContactsAdapter(Context context, List<Contact> contactList, ContactsAdapterListener listener) {
         this.context = context;
         this.listener = listener;
-        this.contactList = contactList;
+        this.contactList = listWithoutDuplicates;
         this.contactListFiltered = contactList;
+       // this.listWithoutDuplicates = listWithoutDuplicates;
     }
 
     @Override
@@ -70,9 +73,13 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        final Contact contact = contactListFiltered.get(position);
-        holder.name.setText(contact.getName());
-        holder.cat_id.setText(contact.getCat_Id());
+
+     //   if(contactListFiltered.size() < contactList.size()) {
+            final Contact contact = contactListFiltered.get(position);
+            holder.name.setText(contact.getName());
+            holder.cat_id.setText(contact.getCat_Id());
+
+       // }
 //        holder.phone.setText(contact.getPhone());
 
     /*    Glide.with(context)
@@ -93,10 +100,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
-                    contactListFiltered = contactList;
+                    contactListFiltered = listWithoutDuplicates;
                 } else {
                     List<Contact> filteredList = new ArrayList<>();
-                    for (Contact row : contactList) {
+                    for (Contact row : listWithoutDuplicates) {
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match

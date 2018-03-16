@@ -30,6 +30,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ContactsAdapter.ContactsAdapterListener {
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
     private ContactsAdapter mAdapter;
     private SearchView searchView;
+
+
 
     // url to fetch contacts json
     // private static final String URL = "https://api.androidhive.info/json/contacts.json";
@@ -137,7 +140,9 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
      */
     private void fetchContacts() {
 
-          recyclerView.setAdapter(mAdapter);
+      //  contactList = new ArrayList<>();
+
+        recyclerView.setAdapter(mAdapter);
 
         JsonArrayRequest request = new JsonArrayRequest(SearchCategories_URL,
                 new Response.Listener<JSONArray>() {
@@ -158,9 +163,15 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                         }.getType());
 
                         // adding contacts to contacts list
-                        reviewList.clear();
-                        contactList.clear();
+                       // reviewList.clear();
+                       // contactList.clear();
                         contactList.addAll(items);
+                        List<Contact> listWithoutDuplicates = new ArrayList<>(new HashSet<>(contactList));
+
+                        listWithoutDuplicates.addAll(items);
+                      //  List<Contact> listWithoutDuplicates = new ArrayList<>(new HashSet<>(contactList));
+
+
 
                         // refreshing recycler view
                         mAdapter.notifyDataSetChanged();
@@ -195,6 +206,7 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 // filter recycler view when query submitted
                 mAdapter.getFilter().filter(query);
                 return false;
@@ -202,12 +214,13 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
             @Override
             public boolean onQueryTextChange(String query) {
-
+            //    contactList.clear();
                 //call fetchContacts function when first letter has been
                 //entered into the searchView
                 fetchContacts();
                 // filter recycler view when text is changed
                 mAdapter.getFilter().filter(query);
+             //   mAdapter.notifyDataSetChanged();
                 return false;
             }
         });
