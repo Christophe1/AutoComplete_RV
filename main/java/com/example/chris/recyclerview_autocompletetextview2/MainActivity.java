@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
     private ContactsAdapter mAdapter;
     private SearchView searchView;
 
-
+   // List res = new ArrayList();
 
     // url to fetch contacts json
     // private static final String URL = "https://api.androidhive.info/json/contacts.json";
@@ -162,13 +162,19 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                         List<Contact> items = new Gson().fromJson(response.toString(), new TypeToken<List<Contact>>() {
                         }.getType());
 
+
+
+                        //res.addAll();
+
                         // adding contacts to contacts list
                        // reviewList.clear();
                        // contactList.clear();
                         contactList.addAll(items);
-                        List<Contact> listWithoutDuplicates = new ArrayList<>(new HashSet<>(contactList));
 
-                        listWithoutDuplicates.addAll(items);
+                     //   contactList=res;
+                      //  List<Contact> listWithoutDuplicates = new ArrayList<>(new HashSet<>(contactList));
+
+                      //  listWithoutDuplicates.addAll(items);
                       //  List<Contact> listWithoutDuplicates = new ArrayList<>(new HashSet<>(contactList));
 
 
@@ -220,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                 fetchContacts();
                 // filter recycler view when text is changed
                 mAdapter.getFilter().filter(query);
-             //   mAdapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
                 return false;
             }
         });

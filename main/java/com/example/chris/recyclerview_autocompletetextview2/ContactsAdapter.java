@@ -58,7 +58,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     public ContactsAdapter(Context context, List<Contact> contactList, ContactsAdapterListener listener) {
         this.context = context;
         this.listener = listener;
-        this.contactList = listWithoutDuplicates;
+        this.contactList = contactList;
         this.contactListFiltered = contactList;
        // this.listWithoutDuplicates = listWithoutDuplicates;
     }
@@ -75,10 +75,11 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     public void onBindViewHolder(MyViewHolder holder, final int position) {
 
      //   if(contactListFiltered.size() < contactList.size()) {
+        for (int i = 0; i < contactListFiltered.size(); i++) {
             final Contact contact = contactListFiltered.get(position);
             holder.name.setText(contact.getName());
             holder.cat_id.setText(contact.getCat_Id());
-
+        }
        // }
 //        holder.phone.setText(contact.getPhone());
 
@@ -100,10 +101,10 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
             protected FilterResults performFiltering(CharSequence charSequence) {
                 String charString = charSequence.toString();
                 if (charString.isEmpty()) {
-                    contactListFiltered = listWithoutDuplicates;
+                    contactListFiltered = contactList;
                 } else {
                     List<Contact> filteredList = new ArrayList<>();
-                    for (Contact row : listWithoutDuplicates) {
+                    for (Contact row : contactList) {
 
                         // name match condition. this might differ depending on your requirement
                         // here we are looking for name or phone number match
@@ -133,4 +134,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     public interface ContactsAdapterListener {
         void onContactSelected(Contact contact);
     }
+
+
 }
