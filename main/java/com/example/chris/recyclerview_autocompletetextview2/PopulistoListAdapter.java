@@ -54,6 +54,8 @@ public class PopulistoListAdapter extends RecyclerView.Adapter<RecyclerView.View
         LayoutInflater inflater = LayoutInflater.from(context);
 
         itemView = inflater.inflate(R.layout.populisto_list_row, parent, false);
+        //itemView = inflater.inflate(R.layout.user_row_item_fetch, parent, false);
+
 
         // View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.yourlayout, parent, false);
         return new ReviewHolder(itemView);

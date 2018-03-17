@@ -36,24 +36,24 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements ContactsAdapter.ContactsAdapterListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
-    private List<Contact> contactList;
-
-    private List<Review> reviewList = new ArrayList<Review>();
-
-    private PopulistoListAdapter pAdapter;
-
-    private ContactsAdapter mAdapter;
     private SearchView searchView;
 
-   // List res = new ArrayList();
 
-    // url to fetch contacts json
-    // private static final String URL = "https://api.androidhive.info/json/contacts.json";
-
+    //in onCreate, we will be showing reviews
+    private List<Review> reviewList = new ArrayList<Review>();
+    //this is the adapter for reviews
+    private PopulistoListAdapter pAdapter;
+    //this is the url for loading the reviews
     private static final String AllReviews_URL = "http://www.populisto.com/AllReviews.php";
-    private static final String SearchCategories_URL = "http://www.populisto.com/AllCategories.php";
-  //private static final String SearchCategories_URL = "https://api.androidhive.info/json/contacts.json";
 
+
+    //when searchView has focus and user types, we will be showing/filtering
+    //categories
+    private List<Contact> contactList = new ArrayList<Contact>();
+    //this is the adapter for categories
+    private ContactsAdapter mAdapter;
+    //this is the url for loading the categories
+    private static final String AllCategories_URL = "http://www.populisto.com/AllCategories.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,38 +62,29 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // toolbar fancy stuff
+        // toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.toolbar_title);
 
-        //Show the back button (???)
-     /*   ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);*/
-
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        contactList = new ArrayList<>();
 
-        //for populisto reviews of the user
+        //the adapter for reviews
         pAdapter = new PopulistoListAdapter(reviewList, this);
 
-        //for filterable
+        //the adapter for filtering categories
         mAdapter = new ContactsAdapter(this, contactList, this);
-
-       // final PopulistoListAdapter adapter = new PopulistoListAdapter(reviewList, this);
-
 
         // white background notification bar
         whiteNotificationBar(recyclerView);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
-      //  recyclerView.setItemAnimator(new DefaultItemAnimator());
-      //  recyclerView.addItemDecoration(new MyDividerItemDecoration(this, DividerItemDecoration.VERTICAL, 36));
 
-          recyclerView.setAdapter(pAdapter);
-      //  recyclerView.setAdapter(mAdapter);
+        //****************
+        //HOW DO I SET mAdapter WHEN searchView HAS THE FOCUS??
+        //****************
 
-       // fetchContacts();
+        recyclerView.setAdapter(pAdapter);
 
         JsonArrayRequest request = new JsonArrayRequest(AllReviews_URL,
                 new Response.Listener<JSONArray>() {
@@ -104,17 +95,11 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                             return;
                         }
 
-                        //create a new instance of the Contact class
-                       // Contact contact = new Contact();
-
-                        //In Contact class, so getItemViewType will know which layout to show
-                       // contact.setType_row("1");
-
                         List<Review> items = new Gson().fromJson(response.toString(), new TypeToken<List<Review>>() {
                         }.getType());
 
                         // adding contacts to contacts list
-                        //contactList.clear();
+                        reviewList.clear();
                         reviewList.addAll(items);
 
                         // refreshing recycler view
@@ -132,57 +117,33 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
         });
 
         MyApplication.getInstance().addToRequestQueue(request);
-
     }
 
-    /**
-     * fetches json by making http calls
-     */
+
+    //this is the function for filtering categories in the searchView
+    //it is called onQueryTextChange
     private void fetchContacts() {
 
-      //  contactList = new ArrayList<>();
+       // recyclerView.setAdapter(mAdapter);
 
-        recyclerView.setAdapter(mAdapter);
-
-        JsonArrayRequest request = new JsonArrayRequest(SearchCategories_URL,
+        JsonArrayRequest request = new JsonArrayRequest(AllCategories_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
                         if (response == null) {
-                            Toast.makeText(getApplicationContext(), "Couldn't fetch the results! Pleas try again.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Couldn't fetch the contacts! Pleas try again.", Toast.LENGTH_LONG).show();
                             return;
                         }
-
-                        //create a new instance of the Contact class
-                        //Contact contact = new Contact();
-
-                        //In Contact class, so getItemViewType will know which layout to show
-                        //contact.setType_row("2");
 
                         List<Contact> items = new Gson().fromJson(response.toString(), new TypeToken<List<Contact>>() {
                         }.getType());
 
-
-
-                        //res.addAll();
-
                         // adding contacts to contacts list
-                       // reviewList.clear();
-                       // contactList.clear();
+                        contactList.clear();
                         contactList.addAll(items);
-
-                     //   contactList=res;
-                      //  List<Contact> listWithoutDuplicates = new ArrayList<>(new HashSet<>(contactList));
-
-                      //  listWithoutDuplicates.addAll(items);
-                      //  List<Contact> listWithoutDuplicates = new ArrayList<>(new HashSet<>(contactList));
-
-
 
                         // refreshing recycler view
                         mAdapter.notifyDataSetChanged();
-                        Toast.makeText(getApplicationContext(), "...fetch.php", Toast.LENGTH_LONG).show();
-
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -210,9 +171,11 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
         // listening to search query text change
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+
+
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 // filter recycler view when query submitted
                 mAdapter.getFilter().filter(query);
                 return false;
@@ -220,13 +183,10 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
             @Override
             public boolean onQueryTextChange(String query) {
-            //    contactList.clear();
-                //call fetchContacts function when first letter has been
-                //entered into the searchView
+
                 fetchContacts();
                 // filter recycler view when text is changed
                 mAdapter.getFilter().filter(query);
-                mAdapter.notifyDataSetChanged();
                 return false;
             }
         });
@@ -271,6 +231,6 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
     public void onContactSelected(Contact contact) {
         Toast.makeText(getApplicationContext(), "Selected: " + contact.getName(), Toast.LENGTH_LONG).show();
 
-    //   Toast.makeText(getApplicationContext(), "Selected: " + contact.getName() + ", " + contact.getPhone(), Toast.LENGTH_LONG).show();
+        //   Toast.makeText(getApplicationContext(), "Selected: " + contact.getName() + ", " + contact.getPhone(), Toast.LENGTH_LONG).show();
     }
 }

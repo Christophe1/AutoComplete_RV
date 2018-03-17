@@ -2,6 +2,7 @@ package com.example.chris.recyclerview_autocompletetextview2;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,20 +23,19 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
         implements Filterable {
     private Context context;
     private List<Contact> contactList;
-    private List<Contact> listWithoutDuplicates;
+    //contactListFiltered are the names in the filtered list
     private List<Contact> contactListFiltered;
     private ContactsAdapterListener listener;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, phone, cat_id;
-      //  public ImageView thumbnail;
+        public TextView name, phone;
+        public ImageView thumbnail;
 
         public MyViewHolder(View view) {
             super(view);
             name = (TextView) view.findViewById(R.id.name);
-            cat_id =  (TextView) view.findViewById(R.id.cat_id);
-            //phone = (TextView) view.findViewById(R.id.phone);
-           // thumbnail = view.findViewById(R.id.thumbnail);
+            //  phone = (TextView) view.findViewById(R.id.phone);
+            // thumbnail = view.findViewById(R.id.thumbnail);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -47,20 +47,12 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
         }
     }
 
-/*    @Override
-    public int getItemViewType(int position) {
-        //for each row in recyclerview, get the getType_row
-        //it will either be the PopulistoListView or the fetched contacts
-        return Integer.parseInt(theContactsList.get(position).getType_row());
-    }*/
-
 
     public ContactsAdapter(Context context, List<Contact> contactList, ContactsAdapterListener listener) {
         this.context = context;
         this.listener = listener;
         this.contactList = contactList;
         this.contactListFiltered = contactList;
-       // this.listWithoutDuplicates = listWithoutDuplicates;
     }
 
     @Override
@@ -73,15 +65,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-
-     //   if(contactListFiltered.size() < contactList.size()) {
-        for (int i = 0; i < contactListFiltered.size(); i++) {
-            final Contact contact = contactListFiltered.get(position);
-            holder.name.setText(contact.getName());
-            holder.cat_id.setText(contact.getCat_Id());
-        }
-       // }
-//        holder.phone.setText(contact.getPhone());
+        final Contact contact = contactListFiltered.get(position);
+        holder.name.setText(contact.getName());
+        // holder.phone.setText(contact.getPhone());
 
     /*    Glide.with(context)
                 .load(contact.getImage())
@@ -119,7 +105,9 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
                 }
 
                 FilterResults filterResults = new FilterResults();
+
                 filterResults.values = contactListFiltered;
+                System.out.println("here it is, contactListFiltered" + contactListFiltered.size());
                 return filterResults;
             }
 
@@ -134,6 +122,4 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.MyView
     public interface ContactsAdapterListener {
         void onContactSelected(Contact contact);
     }
-
-
 }
