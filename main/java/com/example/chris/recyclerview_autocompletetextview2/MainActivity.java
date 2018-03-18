@@ -5,9 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 /*
 import android.support.v7.widget.DividerItemDecoration;
 */
@@ -19,6 +17,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -30,10 +30,9 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ContactsAdapter.ContactsAdapterListener {
+public class MainActivity extends AppCompatActivity implements CategoriesAdapter.CategoriesAdapterListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private RecyclerView recyclerView;
     private SearchView searchView;
@@ -49,9 +48,9 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
 
     //when searchView has focus and user types, we will be showing/filtering
     //categories
-    private List<Contact> contactList = new ArrayList<Contact>();
+    private List<Category> categoryList = new ArrayList<Category>();
     //this is the adapter for categories
-    private ContactsAdapter mAdapter;
+    private CategoriesAdapter mAdapter;
     //this is the url for loading the categories
     private static final String AllCategories_URL = "http://www.populisto.com/AllCategories.php";
 
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
         pAdapter = new PopulistoListAdapter(reviewList, this);
 
         //the adapter for filtering categories
-        mAdapter = new ContactsAdapter(this, contactList, this);
+        mAdapter = new CategoriesAdapter(this, categoryList, this);
 
         // white background notification bar
         whiteNotificationBar(recyclerView);
@@ -135,12 +134,13 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                             return;
                         }
 
-                        List<Contact> items = new Gson().fromJson(response.toString(), new TypeToken<List<Contact>>() {
+                        List<Category> items = new Gson().fromJson(response.toString(), new TypeToken<List<Category>>() {
                         }.getType());
 
+                        //clear the list
+                        categoryList.clear();
                         // adding contacts to contacts list
-                        contactList.clear();
-                        contactList.addAll(items);
+                        categoryList.addAll(items);
 
                         // refreshing recycler view
                         mAdapter.notifyDataSetChanged();
@@ -169,8 +169,84 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
                 .getSearchableInfo(getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
 
+       // AutoCompleteTextView searchAutoCompleteTextView = (AutoCompleteTextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+       // searchAutoCompleteTextView.setThreshold(5);
+
+        //SearchView.SearchAutoComplete mSearchSrcTextView = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+
+        // show results from 1 char
+       // mSearchSrcTextView.setThreshold(5);
+
+        //when the search icon, magnifying glass, is clicked
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //your code here
+                //clear the list (we don't want to see the whole
+                //lot, only the ones that are being filtered
+                categoryList.clear();
+
+                //set the adapter to search categories
+                recyclerView.setAdapter(mAdapter);
+                Toast.makeText(getApplicationContext(), "clickety click", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+
+        // Get the search close button image view
+        ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+
+        // Set on click listener
+        closeButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Search close button clicked", Toast.LENGTH_LONG).show();
+
+             //   LoggerUtils.d(LOG, "Search close button clicked");
+                //Find EditText view
+              //  EditText et = (EditText) findViewById(R.id.search_src_text);
+
+                //Clear the text from EditText view
+              //  et.setText("");
+
+                //Clear query
+                searchView.setQuery("", false);
+                //Collapse the action view
+                searchView.onActionViewCollapsed();
+
+                //go back to the reviews
+                recyclerView.setAdapter(pAdapter);
+                //Collapse the search widget
+               // mSearchMenu.collapseActionView();
+            }
+        });
+
+
+
+
+
+
+
+
+
+        //when the searchview is closed
+/*        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                //go back to the reviews
+                recyclerView.setAdapter(pAdapter);
+                Toast.makeText(getApplicationContext(), "clickety cluck", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        });*/
+
         // listening to search query text change
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+
 
 
 
@@ -228,9 +304,9 @@ public class MainActivity extends AppCompatActivity implements ContactsAdapter.C
     }
 
     @Override
-    public void onContactSelected(Contact contact) {
-        Toast.makeText(getApplicationContext(), "Selected: " + contact.getName(), Toast.LENGTH_LONG).show();
+    public void onContactSelected(Category category) {
+        Toast.makeText(getApplicationContext(), "Selected: " + category.getName(), Toast.LENGTH_LONG).show();
 
-        //   Toast.makeText(getApplicationContext(), "Selected: " + contact.getName() + ", " + contact.getPhone(), Toast.LENGTH_LONG).show();
+        //   Toast.makeText(getApplicationContext(), "Selected: " + category.getName() + ", " + category.getPhone(), Toast.LENGTH_LONG).show();
     }
 }
