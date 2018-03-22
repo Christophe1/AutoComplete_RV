@@ -123,8 +123,13 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
     //it is called onQueryTextChange
     private void fetchContacts() {
 
-       // recyclerView.setAdapter(mAdapter);
+        //still crashes the app, with this here
+        //recyclerView.setAdapter(mAdapter);
 
+        //still crashes the app, with this here
+   /*   if  (mAdapter!=null)
+      {recyclerView.setAdapter(mAdapter);}
+*/
         JsonArrayRequest request = new JsonArrayRequest(AllCategories_URL,
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -142,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
                         // adding contacts to contacts list
                         categoryList.addAll(items);
 
+                        //app not crashing as much with this here
+                        recyclerView.setAdapter(mAdapter);
                         // refreshing recycler view
                         mAdapter.notifyDataSetChanged();
                     }
@@ -159,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         // Associate searchable configuration with the SearchView
@@ -182,24 +190,24 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
             @Override
             public void onClick(View v) {
 
-                //your code here
                 //clear the list (we don't want to see the whole
                 //lot, only the ones that are being filtered
                 categoryList.clear();
 
                 //set the adapter to search categories
                 recyclerView.setAdapter(mAdapter);
+                //mAdapter.notifyDataSetChanged();
                 Toast.makeText(getApplicationContext(), "clickety click", Toast.LENGTH_LONG).show();
 
             }
         });
 
 
-        // Get the search close button image view
+        // Get the search close button image view. 'X'
         ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
 
         // Set on click listener
-        closeButton.setOnClickListener(new View.OnClickListener() {
+/*        closeButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -214,15 +222,22 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
 
                 //Clear query
                 searchView.setQuery("", false);
+
+                //clear the list (we don't want to see the whole
+                //lot, only the ones that are being filtered
+                //categoryList.clear();
+
+
                 //Collapse the action view
-                searchView.onActionViewCollapsed();
+                //searchView.onActionViewCollapsed();
 
                 //go back to the reviews
                 recyclerView.setAdapter(pAdapter);
+
                 //Collapse the search widget
                // mSearchMenu.collapseActionView();
             }
-        });
+        });*/
 
 
 
@@ -249,9 +264,9 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
 
 
 
-
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 // filter recycler view when query submitted
                 mAdapter.getFilter().filter(query);
                 return false;
@@ -260,12 +275,18 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
             @Override
             public boolean onQueryTextChange(String query) {
 
+                //WILL CRASH IF UNCOMMENTED
+                //recyclerView.setAdapter(mAdapter);
+
+                //reviewList.clear();
+
                 fetchContacts();
                 // filter recycler view when text is changed
                 mAdapter.getFilter().filter(query);
                 return false;
             }
         });
+
         return true;
     }
 

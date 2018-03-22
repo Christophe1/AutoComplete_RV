@@ -75,9 +75,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
 
     @Override
     public int getItemCount() {
-        System.out.println("getItemCount is :" + categoryListFiltered.size());
-       // return  categoryListFiltered == null ? 0 : categoryListFiltered.size();
-       // return categoryListFiltered != null ? 1 : categoryListFiltered.size();
+
+        //app crashes when this line is not commented
+//        System.out.println("getItemCount is :" + categoryListFiltered.size());
+
        return categoryListFiltered.size();
     }
 
