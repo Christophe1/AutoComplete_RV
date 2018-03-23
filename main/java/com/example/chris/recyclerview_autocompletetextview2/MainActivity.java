@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         searchView = (SearchView) menu.findItem(R.id.action_search)
                 .getActionView();
         searchView.setSearchableInfo(searchManager
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
        // mSearchSrcTextView.setThreshold(5);
 
         //when the search icon, magnifying glass, is clicked
-        searchView.setOnSearchClickListener(new View.OnClickListener() {
+/*        searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -200,18 +200,19 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
                 Toast.makeText(getApplicationContext(), "clickety click", Toast.LENGTH_LONG).show();
 
             }
-        });
+        });*/
 
 
         // Get the search close button image view. 'X'
-        ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        //ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
 
+        //final MenuItem searchMenuItem = optionsMenu.findItem(R.id.search);
         // Set on click listener
-/*        closeButton.setOnClickListener(new View.OnClickListener() {
+      //  closeButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Search close button clicked", Toast.LENGTH_LONG).show();
+           // @Override
+            //public void onClick(View v) {
+             //   Toast.makeText(getApplicationContext(), "Search close button clicked", Toast.LENGTH_LONG).show();
 
              //   LoggerUtils.d(LOG, "Search close button clicked");
                 //Find EditText view
@@ -227,17 +228,17 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
                 //lot, only the ones that are being filtered
                 //categoryList.clear();
 
-
+                //THIS DOESNT DO IT
                 //Collapse the action view
                 //searchView.onActionViewCollapsed();
 
                 //go back to the reviews
-                recyclerView.setAdapter(pAdapter);
+                //recyclerView.setAdapter(pAdapter);
 
                 //Collapse the search widget
-               // mSearchMenu.collapseActionView();
-            }
-        });*/
+               // searchMenuItem.collapseActionView();
+           //}
+      //  });
 
 
 
@@ -286,9 +287,13 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
                 return false;
             }
         });
-
+        //DOESNT GO BACK TO REVIEWS
+        //go back to the reviews
+        //recyclerView.setAdapter(pAdapter);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
