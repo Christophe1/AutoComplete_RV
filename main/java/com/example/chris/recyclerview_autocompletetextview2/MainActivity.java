@@ -21,6 +21,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -28,9 +29,12 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements CategoriesAdapter.CategoriesAdapterListener {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -45,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
     //this is the url for loading the reviews
     private static final String AllReviews_URL = "http://www.populisto.com/AllReviews.php";
 
+    //we are posting phoneNoofUser, the key is phonenumberofuser, which we see in php
+    public static final String KEY_PHONENUMBER_USER = "phonenumberofuser";
 
     //when searchView has focus and user types, we will be showing/filtering
     //categories
@@ -53,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
     private CategoriesAdapter mAdapter;
     //this is the url for loading the categories
     private static final String AllCategories_URL = "http://www.populisto.com/AllCategories.php";
+
+    String phoneNoofUser = "+353872934480";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
         // toolbar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.toolbar_title);
+
+
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -159,10 +169,26 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
                 Log.e(TAG, "Error: " + error.getMessage());
                 Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
-        });
+        }) {
 
-        MyApplication.getInstance().addToRequestQueue(request);
-    }
+                    @Override
+                    //post info to php
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<String, String>();
+                        //phoneNoofUser is the value we get from Android, the user's phonenumber.
+                        //the key is "phonenumberofuser". When we see "phonenumberofuser" in our php,
+                        //put in phoneNoofUser
+                        params.put(KEY_PHONENUMBER_USER, "+353872934480");
+
+                        return params;
+
+
+                    }
+                };
+
+
+                MyApplication.getInstance().addToRequestQueue(request);
+            }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
