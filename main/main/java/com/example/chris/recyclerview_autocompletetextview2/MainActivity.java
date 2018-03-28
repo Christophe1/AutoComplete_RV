@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
                 //phoneNoofUser is the value we get from Android, the user's phonenumber.
                 //the key,KEY_PHONENUMBER_USER, is "phonenumberofuser". When we see "phonenumberofuser" in our php,
                 //put in phoneNoofUser
-                params.put(KEY_PHONENUMBER_USER, "Mr Smith");
+                params.put(KEY_PHONENUMBER_USER, phoneNoofUser);
                 return params;
 
             }

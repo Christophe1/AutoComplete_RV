@@ -34,7 +34,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
         public MyViewHolder(View view) {
             super(view);
             name = (TextView) view.findViewById(R.id.name);
-            //  phone = (TextView) view.findViewById(R.id.phone);
+            phone = (TextView) view.findViewById(R.id.phone);
             // thumbnail = view.findViewById(R.id.thumbnail);
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -91,7 +91,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
+
+                //the text entered in the search box
                 String charString = charSequence.toString();
+
+                //if searchbox is empty, show the whole list
                 if (charString.isEmpty()) {
                     categoryListFiltered = categoryList;
                 } else {
@@ -99,22 +103,38 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
 
                     for (Category row : categoryList) {
 
-                        //split the category into separate words
-                        String[] arr = row.getName().split(" ");
+                        //split the php title into separate words
+                        String[] title_in_php = row.getName().split(" ");
 
                         //for every split word
-                        for (String ss : arr) {
+                        for (String split_title : title_in_php) {
 
-                            //if (row.getName().toLowerCase().contains(charString.toLowerCase()) || row.getPhone().contains(charSequence)) {
+                        //if the search term entered is a whole word in the title
+                        //for example, "red onions". This is split into "red" and "onions"
+                        //with our 'split' function, above.
+                        //so if the search term starts with "r" or "o", the row will be added
+                        //to the list.
+                        if (split_title.toLowerCase().startsWith(charString.toLowerCase())) {
 
-                            //if any of the words start with the search term
-                            if (ss.toLowerCase().startsWith(charString.toLowerCase())) {
+                            //add the row to the list
+                            filteredList.add(row);
 
+                        } else if
+                                //this is for if the title starts with the search term.
+                                //so if the search term starts with "r", "red onions"
+                                //will be added to the list UNLESS it has already been
+                                //added (in the if statement above)
+                                    (row.getName().startsWith(charString.toLowerCase()))
+                                     {
+
+                            //add the row to the list unless it has been added already
+                            if (!filteredList.contains(row)) {
                                 filteredList.add(row);
-                                System.out.println("bowbow2:" + filteredList.size());
 
                             }
                         }
+                    }
+
                     }
 
                     categoryListFiltered = filteredList;
@@ -123,7 +143,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
                 FilterResults filterResults = new FilterResults();
 
                 filterResults.values = categoryListFiltered;
-                System.out.println("here it is, categoryListFiltered" + categoryListFiltered.size());
                 return filterResults;
             }
 

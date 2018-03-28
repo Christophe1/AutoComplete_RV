@@ -7,7 +7,7 @@ package com.example.chris.recyclerview_autocompletetextview2;
 public class Category {
     String cat_name;
     //  String image;
-    // String phone;
+     String phone;
 
     public Category() {
     }
@@ -20,7 +20,7 @@ public class Category {
     //      return image;
     //  }
 
-    //public String getPhone() {
-    //   return phone;
-    // }
+    public String getPhone() {
+       return phone;
+     }
 }
