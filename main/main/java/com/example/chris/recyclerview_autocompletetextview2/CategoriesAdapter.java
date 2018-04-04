@@ -2,6 +2,7 @@ package com.example.chris.recyclerview_autocompletetextview2;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +30,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, phone;
+        public TextView name, sharedWith;
         public ImageView thumbnail;
 
         public MyViewHolder(View view) {
             super(view);
             name = (TextView) view.findViewById(R.id.name);
-            phone = (TextView) view.findViewById(R.id.phone);
+            sharedWith = (TextView) view.findViewById(R.id.sharedWith);
             // thumbnail = view.findViewById(R.id.thumbnail);
 
             view.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +71,14 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
 
         final Category category = categoryListFiltered.get(position);
         holder.name.setText(category.getName());
-         holder.phone.setText("U");
+        holder.sharedWith.setText(Html.fromHtml("(" + "<font color='#0A7FDA'>" + category.getPrivateCount()+ "</font>" + "," + "<font color='#009900'>" + category.getPublicCount()+ "</font>" + ")") );
+                // holder.sharedWith.setText("(" + Html.fromHtml("<font color='#0A7FDA'>" + category.getPrivateCount()+ "</font>") +  ")");
+        //holder.sharedWith.setText("(" + Html.fromHtml("<font color='#009900'>" + category.getPrivateCount()+ "</font>") + "," + Html.fromHtml("<font color='#0A7FDA'>" + category.getPublicCount()+ "</font>") + ")");
+
+        //holder.sharedWith.setText(Html.fromHtml("<font color='#00FF00'>text</font>"));
+
+        //holder.sharedWith.setText("(" + category.getPrivateCount() + "," + (Html.fromHtml("<font color='#00FF00'>category.getPublicCount()</font>") + ")"));
+        //holder.sharedWith.setText("(" + category.getPrivateCount() + "," + (Html.fromHtml("<font color='#00FF00'>green</font>") + ")"));
 
     }
 
@@ -97,7 +106,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.My
 
                 //if searchbox is empty, show the whole list
                 if (charString.isEmpty()) {
-                    categoryListFiltered = categoryList;
+                    //Toast.makeText(context, "yupp", Toast.LENGTH_SHORT).show();
+
+                      categoryListFiltered = categoryList;
                 } else {
                     List<Category> filteredList = new ArrayList<>();
 

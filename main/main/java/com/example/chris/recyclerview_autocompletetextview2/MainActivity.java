@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements CategoriesAdapter.CategoriesAdapterListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private RecyclerView recyclerView;
+    public static RecyclerView recyclerView;
     private SearchView searchView;
 
     ArrayList<String> items;
@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
     //in onCreate, we will be showing reviews
     private List<Review> reviewList = new ArrayList<Review>();
     //this is the adapter for reviews
-    private PopulistoListAdapter pAdapter;
+    public PopulistoListAdapter pAdapter;
     //this is the url for loading the reviews
     private static final String AllReviews_URL = "http://www.populisto.com/AllReviews.php";
 
@@ -61,7 +61,9 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
     //this is the adapter for categories
     private CategoriesAdapter mAdapter;
     //this is the url for loading the categories
-    private static final String AllCategories_URL = "http://www.populisto.com/AllCategories.php";
+    //private static final String AllCategories_URL = "http://www.populisto.com/AllCategories.php";
+    private static final String AllCategories_URL = "http://www.populisto.com/CategorySearch.php";
+
 
     String phoneNoofUser = "+353872934480";
 
@@ -213,80 +215,8 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
                 .getSearchableInfo(getComponentName()));
         searchView.setMaxWidth(Integer.MAX_VALUE);
 
-        // AutoCompleteTextView searchAutoCompleteTextView = (AutoCompleteTextView) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-        // searchAutoCompleteTextView.setThreshold(5);
-
-        //SearchView.SearchAutoComplete mSearchSrcTextView = (SearchView.SearchAutoComplete) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
-
-        // show results from 1 char
-        // mSearchSrcTextView.setThreshold(5);
-
-        //when the search icon, magnifying glass, is clicked
-/*        searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //clear the list (we don't want to see the whole
-                //lot, only the ones that are being filtered
-                categoryList.clear();
-
-                //set the adapter to search categories
-                recyclerView.setAdapter(mAdapter);
-                //mAdapter.notifyDataSetChanged();
-                Toast.makeText(getApplicationContext(), "clickety click", Toast.LENGTH_LONG).show();
-
-            }
-        });*/
-
-
-        // Get the search close button image view. 'X'
-        //ImageView closeButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
-
-        //final MenuItem searchMenuItem = optionsMenu.findItem(R.id.search);
-        // Set on click listener
-        //  closeButton.setOnClickListener(new View.OnClickListener() {
-
-        // @Override
-        //public void onClick(View v) {
-        //   Toast.makeText(getApplicationContext(), "Search close button clicked", Toast.LENGTH_LONG).show();
-
-        //   LoggerUtils.d(LOG, "Search close button clicked");
-        //Find EditText view
-        //  EditText et = (EditText) findViewById(R.id.search_src_text);
-
-        //Clear the text from EditText view
-        //  et.setText("");
-
         //Clear query
         searchView.setQuery("", false);
-
-        //clear the list (we don't want to see the whole
-        //lot, only the ones that are being filtered
-        //categoryList.clear();
-
-        //THIS DOESNT DO IT
-        //Collapse the action view
-        //searchView.onActionViewCollapsed();
-
-        //go back to the reviews
-        //recyclerView.setAdapter(pAdapter);
-
-        //Collapse the search widget
-        // searchMenuItem.collapseActionView();
-        //}
-        //  });
-
-
-        //when the searchview is closed
-/*        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                //go back to the reviews
-                recyclerView.setAdapter(pAdapter);
-                Toast.makeText(getApplicationContext(), "clickety cluck", Toast.LENGTH_LONG).show();
-                return false;
-            }
-        });*/
 
         // listening to search query text change
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -305,18 +235,24 @@ public class MainActivity extends AppCompatActivity implements CategoriesAdapter
 
                 //WILL CRASH IF UNCOMMENTED
                 //recyclerView.setAdapter(mAdapter);
-
                 //reviewList.clear();
 
-                fetchContacts();
-                // filter recycler view when text is changed
-                mAdapter.getFilter().filter(query);
+                //if the searchView is empty
+                if (searchView.getQuery().length() == 0) {
+
+                    //show the reviews, not the searched categories
+                     recyclerView.setAdapter(pAdapter);
+                     pAdapter.notifyDataSetChanged();
+                } else {
+                    //if there's text in the search box
+                    fetchContacts();
+                    // filter recycler view when text is changed
+                    mAdapter.getFilter().filter(query);
+                }
                 return false;
-            }
-        });
-        //DOESNT GO BACK TO REVIEWS
-        //go back to the reviews
-        //recyclerView.setAdapter(pAdapter);
+
+            }});
+
         return true;
     }
 

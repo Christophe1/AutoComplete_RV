@@ -33,11 +33,11 @@
         android:textSize="@dimen/contact_number" />-->
 
     <TextView
-        android:id="@+id/phone"
+        android:id="@+id/sharedWith"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
         android:textColor="@color/colorPrimaryDark"
-        android:textSize="@dimen/contact_number" />
+        android:textSize="@dimen/contact_name" />
 
 </RelativeLayout>
